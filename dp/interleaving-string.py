@@ -9,6 +9,7 @@ Approach
     Return false if s3 cannot be matched with s1 or s2
     Can memoize indicies to results in hash table ( len(s1)*len(s2) space)
     Runtime: 2^n
+    permutations of len
 """
 
 memo = {}
