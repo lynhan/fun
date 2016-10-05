@@ -21,40 +21,49 @@ print(is_scramble("rfeat", "great"))  # False
 
 def is_scramble_memo(s1, s2):
     """
-    This approach uses a bottom up approach by starting with single character comparisons. We use a 3 dimensional table called memo, where memo[i][j][length] contains a boolean for whether s1[i:i+length] is a scramble of s2[j:j+length].
+    This bottom up approach starts with single character comparisons. We use a 3 dimensional table called memo, where memo[length][i][j] contains a boolean for whether s1[i:i+length] is a scramble of s2[j:j+length]. The order of table indicies is arbitrary.
     """
     if sorted(s1) != sorted(s2):
         return False
     size = len(s1)
-    memo = [[[False for j in range(size)] for i in range(size)] for k in range(size + 1)]
+    memo = [[[False for j in range(size)] for i in range(size)] for swapland in range(size + 1)]
 
     # init one char comparisons
     for i in range(size):
         for j in range(size):
             memo[1][i][j] = s1[i] == s2[j]
 
-    for length in range(2, size + 1):
-        # length ranges from 2 to size inclusive
-        # to encompass whole word
+    # begin exhaustive search
+    #   i and j take care of starting positions for the segment to swap
+    #   swapland defines the length of the stretch of characters over which swaps happen
+    #   ln is the length of the segment being swapped
+    for swapland in range(2, size + 1):
+        # swapland ranges from 2 to size inclusive
 
-        for i in range(size + 1 - length):
+        for i in range(size + 1 - swapland):
             # i ranges from
             #   0 to size - 2 inclusive at the start
             #   0 at the end
 
-            for j in range(size + 1 - length):
+            for j in range(size + 1 - swapland):
                 # j ranges from
                 #   0 to size - 2 inclusive at the start
                 #   0 at the end
 
-                for k in range(1, length):
-                    # k ranges from
+                for ln in range(1, swapland):
+                    # ln ranges from
                     #   1 to 2 at the start
                     #   1 to size - 1 at the end
-                    if (memo[k][i][j] and memo[length - k][i + k][j + k]) \
-                    or (memo[k][i][j + length - k] and memo[length - k][i + k][j]):
-                        memo[length][i][j] = True
-                        break
+                    if memo[ln][i][j] and memo[swapland - ln][i + ln][j + ln]:
+                        # segment did not move
+                        # compare left segments in s1 and s2
+                        # and right segments in s2 and s2
+                        memo[swapland][i][j] = True
+                    if memo[ln][i][j + swapland - ln] and memo[swapland - ln][i + ln][j]:
+                        # segment moved to the other side of swap land
+                        # compare s1 left to s2 right
+                        # and s1 right to s2 left
+                        memo[swapland][i][j] = True
     return memo[size][0][0]
 
 print('With memoization:')
