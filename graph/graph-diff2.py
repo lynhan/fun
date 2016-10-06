@@ -1,10 +1,6 @@
 """
 https://www.hackerrank.com/challenges/cut-the-tree
-Given undirected graph
-    removing an edge will result in two subgraphs
-    graph diff = graph1_sum - graph_sum
-Return
-    min graph diff
+O(E^2)
 """
 
 def get_input():
@@ -55,48 +51,37 @@ def graph_diff():
     EC = get_edge_count(AL)
     graph_sum = get_graph_sum(1, AL, VAL)
     min_diff = float('inf')
-    done = set([]) # nodes whose edges have all been examined
+    visited_nodes = set([])
     DIFF = {}
-
     import heapq as h
     q = []  # nodes ordered by min edge count
     for node in AL:
         h.heappush(q, (len(AL[node]), node))
-    # print("queue", q)
-
-    while len(q) > 1:
+    while len(q) > 1:  # O(edges)
         cur = h.heappop(q)
         cur_node = cur[1]
-        # print('cur_node', cur_node)
-        others_done = []
-        others_not_done = []  # will only have 1 node
-        for other in AL[cur_node]:
-            if other in done:
-                others_done.append(other)
+        visited_neighbors = []
+        new_neighbor = []  # will only have 1 node
+        for neighbor in AL[cur_node]:  # O(max neighbor)
+            if neighbor in visited_nodes:
+                visited_neighbors.append(neighbor)
             else:
-                others_not_done.append(other)
-        buddy = others_not_done[0]
-        # print('buddy', buddy)
-
-        this_sum = VAL[cur_node]
-        for other_node in others_done:
-            d = DIFF[tuple(sorted((cur_node, other_node)))]
-            this_sum += d[other_node]
-        other_sum = graph_sum - this_sum
-        # print('this_sum', this_sum)
-
-        DIFF[tuple(sorted((cur_node, buddy)))] = {cur_node: this_sum, buddy: other_sum}
-        q.remove((EC[buddy], buddy))
-        EC[buddy] = EC[buddy] - 1
-        q.append((EC[buddy], buddy))
+                new_neighbor.append(neighbor)
+        edge_neighbor = new_neighbor[0]
+        cur_node_graph_sum = VAL[cur_node]
+        for n in visited_neighbors:
+            d = DIFF[tuple(sorted((cur_node, n)))]
+            cur_node_graph_sum += d[n]
+        DIFF[tuple(sorted((cur_node, edge_neighbor)))] = {
+            cur_node: cur_node_graph_sum,
+            edge_neighbor: graph_sum - cur_node_graph_sum}
+        # update edge count for node in heap : O(edges)
+        q.remove((EC[edge_neighbor], edge_neighbor))
+        EC[edge_neighbor] = EC[edge_neighbor] - 1
+        q.append((EC[edge_neighbor], edge_neighbor))
         h.heapify(q)
-        done.add(cur_node)
-        # print('diff', DIFF)
-        # print('done', done)
-        # print('ec', EC)
-        # print('new queue', q)
-        # import pdb; pdb.set_trace()
-        min_diff = min(min_diff, abs(this_sum - other_sum))
+        visited_nodes.add(cur_node)
+        min_diff = min(min_diff, abs(graph_sum - 2*cur_node_graph_sum))
     print(min_diff)
 
 graph_diff()

@@ -2,9 +2,9 @@
 https://www.hackerrank.com/challenges/cut-the-tree
 Given undirected graph
     removing an edge will result in two subgraphs
-    graph diff = graph1_sum - graph_sum
-Return
-    min graph diff
+    graph diff = graph1_node_sum - graph2_node_sum
+Return: min graph diff
+O(E*V)
 """
 
 def get_input():
