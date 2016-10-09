@@ -49,6 +49,7 @@ def flexible(price):
 """
 Alt
     can buy and sell AT MOST k times
+    assumes can sell and buy on same day
 Approach
     consider two factors in dp solution:
         num transactions
@@ -66,22 +67,38 @@ Approach
         base cases:
             tr = 0, profit = 0
             day = 0, profit = 0
-    time: O(k*n^2)
+    time: O(k*n)
     space: O(k*n)
 """
 def at_most(price, k):
     profit = [[0 for i in range(len(price))] for n in range(k + 1)]
     for tr in range(1, k+1):
+        profit_after_lowest_buy = -price[0]
         for day in range(1, len(price)):
-            for past in range(0, day):
-                pmax = 0  # max profit from past buy
-                profit[tr][day] = max(profit[tr][day-1], \
-                                price[day] – price[past] + profit[tr-1][past])
+            # days range from 0 to current day - 1
+            profit_after_lowest_buy = max(profit_after_lowest_buy, \
+                                    profit[tr-1][day-1] - price[day-1]);
+            case1 = profit[tr][day-1] # don't sell, no transaction today
+            case2 = price[day] + profit_after_lowest_buy  # sale + optimal previous earnings
+            profit[tr][day] = max(case1, case2)
     return profit[k][len(price)-1]
 
 """
 Alt
-    buy and sell EXACTLY k times
+    buy and sell EXACTLY 2 times
+Approach
+    find max profit if we sell on each day
+    find max profit if we buy on each day
 """
 def exact(price, k):
-    pass
+    max_if_buy = [0]*len(price)
+    cur_max = float('-inf')
+    for i in range(len(price)-1, -1, -1):
+        cur_max = max(cur_max, price[i])
+        max_if_buy[i] = cur_max - price[i]
+    max_profit = 0
+    cur_min = float('inf')
+    for i in range(len(price)):
+        cur_min = min(cur_min, price[i])
+        max_profit = max(max_profit, price[i] - cur_min + max_if_buy[i])
+    return max_profit
