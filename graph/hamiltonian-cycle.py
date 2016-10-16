@@ -10,8 +10,7 @@ def ham(V, AL):
         if index == len(V)-1:
             if 0 in AL[path[index]]:
                 return True
-            else:
-                return False
+            return False
         for neighbor in AL[path[index]]:
             if neighbor not in path[:index+1]:
                 path[index+1] = neighbor
