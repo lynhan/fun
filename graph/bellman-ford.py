@@ -10,7 +10,7 @@ def f(V, E, W, source):
     for i in range(len(E)):
         for node in V:
             if dist[node] != float('inf'):  # can get to this node
-``              for neighbor in E[node]:  # list of edges
+                for neighbor in E[node]:  # list of edges
                     dist[neighbor = min(dist[neighbor, dist[node] + W[edge])
     for node in V:
         for neighbor in E[node]:
