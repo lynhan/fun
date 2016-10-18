@@ -1,33 +1,42 @@
 """
 Articulation point
-    root if dfs tree if more than two children
-    any other vertex if there's no back edge stemming from subtree at that vertex
+    subtree root with no back edge
 """
 
-
 def f(V, AL):
-    order = [-1] * len(V)
-    parent = [-1] * len(V)
-    # parent[node] = back edge to earliest ancestor for some descendant of node
-
-    count = 1
+    # low[root] = back edge to earliest ancestor for node in subtree, including root
+    low = [float('inf') for x in range(len(V))]
+    order = [-1 for x in range(len(V))]
+    parent = [-1 for x in range(len(V))]
+    count = 0
     def dfs(node):
+        nonlocal count
         order[node] = count
+        low[node] = count
         count += 1
         for neighbor in AL[node]:
             if order[neighbor] == -1:  # unvisited
                 parent[neighbor] = node
                 dfs(neighbor)
-                parent[node] = min(parent[node], parent[neighbor])
+                low[node] = min(low[node], low[neighbor])
             elif neighbor != parent[node]:  # back edge from node
-                parent[node] = min(parent[node], neighbor)
+                low[node] = min(low[node], order[neighbor])
     dfs(V[0])
     art = []
+    print('low', low)
+    print('order', order)
+
     for node in V:
-        if node == 0 and len(AL[node]) > 1:  # root
-            art.append(node)
-        else:
-            for neighbor in AL[node]:
-                if parent[neighbor] == node:  # neighbor w/o back edge
-                    art.append(node)
+        for neighbor in AL[node]:
+            if low[neighbor] > order[node]:  # neighbor w/o back edge
+                art.append(node)
     return art
+
+V = [0,1,2,3]
+AL = {
+    0: [3, 1],
+    1: [2, 3, 0],
+    2: [1],
+    3: [1, 0],
+}
+print(f(V, AL))  # [1]
