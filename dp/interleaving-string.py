@@ -19,26 +19,23 @@ def interleave(s1, s2, s3):
     if (len(s1),len(s2),len(s3)) in memo:
         memo[(len(s1),len(s2),len(s3))]['hit'] += 1
         return memo[(len(s1),len(s2),len(s3))]['result']
-    case1 = s1 and s3[0] == s1[0] and interleave(s1[1:], s2, s3[1:])
-    case2 = s2 and s3[0] == s2[0] and interleave(s1, s2[1:], s3[1:])
-    if case1:
+    if s1 and s3[0] == s1[0] and interleave(s1[1:], s2, s3[1:]):
         memo[(len(s1),len(s2),len(s3))] = {
             'result': True,
             'hit': 0,
         }
         return True
-    if case2:
+    if s2 and s3[0] == s2[0] and interleave(s1, s2[1:], s3[1:]):
         memo[(len(s1),len(s2),len(s3))] = {
             'result': True,
             'hit': 0,
         }
         return True
-    elif not case1 and not case2:
-        memo[(len(s1),len(s2),len(s3))] = {
-            'result': False,
-            'hit': 0,
-        }
-        return False
+    memo[(len(s1),len(s2),len(s3))] = {
+        'result': False,
+        'hit': 0,
+    }
+    return False
 
 # each parameter combination will be checked at most twice
 # the first time to compute its value
