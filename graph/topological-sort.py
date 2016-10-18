@@ -24,7 +24,7 @@ def khan(S):
     else:
         return L
 
-def dfs(unmarked):
+def dfs(unmarked):  # set of all nodes
     """
     Append nodes to L bottom up (leaf nodes first), return reverse.
     """
@@ -33,7 +33,7 @@ def dfs(unmarked):
     def visit(node):
         if node in visited:
             raise ValueError("graph not DAG")
-        visited.append(node)
+        visited.add(node)
         if node in unmarked:
             # we are recursing, so node wasn't popped from the while loop
             unmarked.remove(node)
