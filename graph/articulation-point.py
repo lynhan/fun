@@ -23,9 +23,6 @@ def f(V, AL):
                 low[node] = min(low[node], order[neighbor])
     dfs(V[0])
     art = []
-    print('low', low)
-    print('order', order)
-
     for node in V:
         for neighbor in AL[node]:
             if low[neighbor] > order[node]:  # neighbor w/o back edge
