@@ -7,10 +7,9 @@ Approach
 """
 
 def gcd(a, b):
-    while a != b:
-        diff = abs(a-b)
-        if a > b:
-            a = diff
-        else:
-            b = diff
-    return a
+    print(a, b)
+    if b == 0:
+        return a
+    return gcd(b, a % b)
+
+print(gcd(6, 15))
